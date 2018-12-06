@@ -32,8 +32,6 @@ inputs.each_with_index do |location, index|
 end
 
 candidates = (0...inputs.count).to_a
-distance_record = {}
-
 
 # delete all candidate on outer region of x axis
 0.upto(max_grid_length) do |x|
@@ -47,23 +45,7 @@ end
   candidates.delete(grid[y][max_grid_length])
 end
 
-# add up area of remaining candidate
-candidates.each do |candidate|
-  0.upto(max_grid_length).each do |x|
-    0.upto(max_grid_length).each do |y|
-      elem = grid[y][x]
-      if elem == candidate
-        if distance_record[candidate]
-          distance_record[candidate] += 1
-        else
-          distance_record[candidate] = 1
-        end
-      end
-    end
-  end
-end
-
-location, max_area = distance_record.max_by {|k, v| v}
+location, max_area = grid.flatten.group_by(&:itself).map{|k,v| [k, v.count]}.reject {|k, v| !candidates.include?(k)}.max_by {|k, v| v}
 
 puts "Location #{location} has max area: #{max_area}"
 
